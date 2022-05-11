@@ -1,0 +1,20 @@
+{
+  "name": "fragments",
+  "version": "0.0.1",
+  "description": "Fragments backend API microservice",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minhhang107/fragments.git"
+  },
+  "keywords": [],
+  "author": "Minh Hang Nguyen",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/minhhang107/fragments/issues"
+  },
+  "homepage": "https://github.com/minhhang107/fragments#readme"
+}
