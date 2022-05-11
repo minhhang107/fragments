@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/minhhang107/fragments/issues"
   },
-  "homepage": "https://github.com/minhhang107/fragments#readme"
+  "homepage": "https://github.com/minhhang107/fragments#readme",
+  "devDependencies": {
+    "prettier": "2.6.2"
+  }
 }
