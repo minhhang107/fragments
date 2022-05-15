@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint --config .eslintrc.js src/**"
+    "lint": "eslint --config .eslintrc.js src/**",
+    "start": "node src/server.js",
+    "dev": "cross-env LOG_LEVEL=debug nodemon ./src/server.js --watch src",
+    "debug": "cross-env LOG_LEVEL=debug nodemon --inspect=0.0.0.0:9229 ./src/server.js --watch src"
   },
   "repository": {
     "type": "git",
@@ -21,7 +24,9 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.15.0",
+    "nodemon": "^2.0.16",
     "prettier": "2.6.2"
   },
   "dependencies": {
