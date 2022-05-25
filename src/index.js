@@ -1,5 +1,7 @@
 // src/index.js
 
+const unneededVar = 'This variable is never used';
+
 // Read environment variables from an .env file (if present)
 require('dotenv').config();
 
