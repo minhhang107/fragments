@@ -4,11 +4,9 @@ module.exports = {
     commonjs: true,
     es2021: true,
   },
-  extends: ['eslint:recommended'],
-  parser: '',
+  extends: 'eslint:recommended',
   parserOptions: {
     ecmaVersion: 'latest',
   },
-  plugins: ['@typescript-eslint'],
   rules: {},
 };
