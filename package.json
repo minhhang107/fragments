@@ -4,11 +4,13 @@
   "description": "Fragments backend API microservice",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:watch": "jest -c jest.config.js --runInBand --watch --",
+    "test": "jest -c jest.config.js --runInBand --",
+    "coverage": "jest -c jest.config.js --runInBand --coverage",
     "start": "node src/index.js",
     "dev": "cross-env LOG_LEVEL=debug nodemon ./src/index.js --watch src",
     "debug": "cross-env LOG_LEVEL=debug nodemon --inspect=0.0.0.0:9229 ./src/index.js --watch src",
-    "lint": "eslint --config .eslintrc.js src/**"
+    "lint": "eslint --config .eslintrc.js src/** tests/**"
   },
   "repository": {
     "type": "git",
@@ -26,8 +28,10 @@
     "@typescript-eslint/parser": "^5.23.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.16.0",
+    "jest": "^28.1.0",
     "nodemon": "^2.0.16",
-    "prettier": "2.6.2"
+    "prettier": "2.6.2",
+    "supertest": "^6.2.3"
   },
   "dependencies": {
     "aws-jwt-verify": "^2.1.3",
@@ -36,6 +40,8 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "helmet": "^5.0.2",
+    "http-auth": "^4.1.9",
+    "http-auth-passport": "^1.0.6",
     "passport": "^0.5.3",
     "passport-http-bearer": "^1.0.1",
     "pino": "^7.11.0",
