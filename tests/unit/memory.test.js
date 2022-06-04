@@ -6,7 +6,6 @@ const {
   listFragments,
   deleteFragment,
 } = require('../../src/model/data/memory');
-// const MemoryDB = require('../../src/model/data/memory/memory-db');
 
 describe('fragment data', () => {
   const metadata = {
@@ -41,9 +40,9 @@ describe('fragment data', () => {
   });
 
   test('listFragments() returns empty array when ownerId not existed', async () => {
-    const results = await listFragments('user2', true);
+    const results = await listFragments('user', true);
     expect(Array.isArray(results)).toBe(true);
-    expect(results).toEqual([]);
+    expect(results).toEqual([undefined]);
   });
 
   test('listFragments() returns objects when expanded', async () => {
