@@ -5,6 +5,7 @@ const wait = async (ms = 1000) => new Promise((resolve) => setTimeout(resolve, m
 
 const validTypes = [
   `text/plain`,
+  `text/plain; charset=utf-8`,
   /*
    Currently, only text/plain is supported. Others will be added later.
 

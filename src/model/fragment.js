@@ -2,6 +2,7 @@
 const { nanoid } = require('nanoid');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
+// const logger = require('../logger');
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -15,6 +16,7 @@ const {
 
 const validTypes = [
   `text/plain`,
+  `text/plain; charset=utf-8`,
   /*
    Currently, only text/plain is supported. Others will be added later.
 
@@ -44,8 +46,8 @@ class Fragment {
 
     this.id = id ? id : nanoid();
     this.ownerId = ownerId;
-    this.created = created ? created.toISOString() : new Date().toISOString();
-    this.updated = updated ? updated.toISOString() : new Date().toISOString();
+    this.created = created ? created : new Date().toISOString();
+    this.updated = updated ? updated : new Date().toISOString();
     this.type = type;
     this.size = size;
   }
@@ -57,9 +59,15 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
-    const results = await listFragments(ownerId, expand);
-    if (results !== [undefined]) return results;
-    return [];
+    try {
+      const results = await listFragments(ownerId, expand);
+      if (expand) {
+        return results.map((fragment) => new Fragment(fragment));
+      }
+      return results;
+    } catch (err) {
+      return [];
+    }
   }
 
   /**
@@ -69,12 +77,12 @@ class Fragment {
    * @returns Promise<Fragment>
    */
   static async byId(ownerId, id) {
-    const fragment = await readFragment(ownerId, id);
-    if (!fragment) {
+    try {
+      const fragment = await readFragment(ownerId, id);
+      return new Fragment(fragment);
+    } catch (err) {
       throw new Error('fragment not existed');
     }
-
-    return fragment;
   }
 
   /**
@@ -101,7 +109,11 @@ class Fragment {
    * @returns Promise<Buffer>
    */
   getData() {
-    return readFragmentData(this.ownerId, this.id);
+    try {
+      return readFragmentData(this.ownerId, this.id);
+    } catch (err) {
+      throw new Error('unable to read fragment');
+    }
   }
 
   /**
@@ -114,7 +126,7 @@ class Fragment {
       throw new Error('data is missing');
     }
 
-    this.size = data.byteLength;
+    this.size = Buffer.byteLength(data);
     this.updated = new Date().toISOString();
     return await writeFragmentData(this.ownerId, this.id, data);
   }
@@ -142,7 +154,20 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    return validTypes;
+    let formats;
+    let imgFormats = ['img/png', 'img/jpeg', 'img/webp', 'img/gif'];
+    if (this.type.includes('text/plain')) {
+      formats = ['text/plain'];
+    } else if (this.type.includes('text/markdown')) {
+      formats = ['text/markdown', 'text/html', 'text/plain'];
+    } else if (this.type.includes('text/html')) {
+      formats = ['text/html', 'text/plain'];
+    } else if (this.type.includes('application/json')) {
+      formats = ['application/json', 'text/plain'];
+    } else if (imgFormats.some((format) => this.type.include(format))) {
+      formats = imgFormats;
+    }
+    return formats;
   }
 
   /**
@@ -151,7 +176,7 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
-    return validTypes.some((type) => value.includes(type));
+    return validTypes.includes(value);
   }
 }
 
