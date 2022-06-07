@@ -169,9 +169,9 @@ describe('Fragment class', () => {
   });
 
   describe('save(), getData(), setData(), byId(), byUser(), delete()', () => {
-    // test('byUser() returns an empty array if there are no fragments for this user', async () => {
-    //   expect(await Fragment.byUser('1234')).toEqual([]);
-    // });
+    test('byUser() returns an empty array if there are no fragments for this user', async () => {
+      expect(await Fragment.byUser('1234')).toEqual([]);
+    });
 
     test('a fragment can be created and save() stores a fragment for the user', async () => {
       const data = Buffer.from('hello');
