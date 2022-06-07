@@ -58,6 +58,7 @@ class MemoryDB {
     // No matter what, we always return an array (even if empty)
     const db = this.db;
     const values = db[primaryKey] && Object.values(db[primaryKey]);
+    if (values === undefined) return Promise.resolve([]);
     return Promise.resolve([].concat(values));
   }
 
