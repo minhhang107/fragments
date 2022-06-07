@@ -25,6 +25,7 @@ const rawBody = () =>
 
 // GET routes
 router.get('/fragments', require('./get'));
+router.get('/fragments/:id', require('./get_fragment'));
 
 // Other routes will go here later on...
 
