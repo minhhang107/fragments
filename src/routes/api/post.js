@@ -1,7 +1,6 @@
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 const { Fragment } = require('../../model/fragment');
 const logger = require('../../logger');
-// const logger = require('../../logger');
 
 module.exports = async (req, res) => {
   const apiUrl = process.env.API_URL || 'https://localhost:8080';
@@ -14,7 +13,7 @@ module.exports = async (req, res) => {
     });
 
     await fragment.save();
-    await fragment.setData(Buffer.from(req.body));
+    await fragment.setData(req.body);
 
     res.set({
       Location: `${apiUrl}/v1/fragments/${fragment.id}`,
