@@ -127,7 +127,7 @@ class Fragment {
     }
 
     this.size = Buffer.byteLength(data);
-    this.updated = new Date().toISOString();
+    this.save();
     return await writeFragmentData(this.ownerId, this.id, data);
   }
 
