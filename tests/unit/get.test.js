@@ -3,6 +3,7 @@
 const request = require('supertest');
 
 const app = require('../../src/app');
+const { readFragment } = require('../../src/model/data');
 
 describe('GET /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -20,5 +21,35 @@ describe('GET /v1/fragments', () => {
     expect(Array.isArray(res.body.fragments)).toBe(true);
   });
 
-  // TODO: we'll need to add tests to check the contents of the fragments array later
+  // Without expand, query should return only id
+  test('without expand, authenticated users get an array of fragment ids', async () => {
+    const requestResult = await request(app)
+      .post('/v1/fragments')
+      .send('this is a fragment')
+      .set('Content-type', 'text/plain')
+      .auth('user1@email.com', 'password1');
+
+    const fragment = await readFragment(
+      requestResult.body.fragment.ownerId,
+      requestResult.body.fragment.id
+    );
+
+    const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
+    expect(typeof res.body.fragments[0]).toBe('string');
+    expect(res.body.fragments[0]).toBe(fragment.id);
+  });
+
+  // With expand, query should return metadata
+  test('with expand, authenticated users get an array of fragment metadata', async () => {
+    await request(app)
+      .post('/v1/fragments')
+      .send('this is a fragment')
+      .set('Content-type', 'text/plain')
+      .auth('user1@email.com', 'password1');
+
+    const res = await request(app)
+      .get('/v1/fragments?expand=1')
+      .auth('user1@email.com', 'password1');
+    expect(typeof res.body.fragments[0]).toBe('object');
+  });
 });
