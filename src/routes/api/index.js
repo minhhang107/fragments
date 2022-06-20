@@ -2,7 +2,7 @@
  * The main entry-point for the v1 version of the fragments API.
  */
 const express = require('express');
-
+const { getFragment, getFragments, getFragmentInfo } = require('./get');
 // Create a router on which to mount our API endpoints
 const router = express.Router();
 
@@ -24,8 +24,11 @@ const rawBody = () =>
   });
 
 // GET routes
-router.get('/fragments', require('./get'));
-router.get('/fragments/:id', require('./get-fragment'));
+// router.get('/fragments', require('./get'));
+// router.get('/fragments/:id', require('./get-fragment'));
+router.get('/fragments', getFragments);
+router.get('/fragments/:id', getFragment);
+router.get('/fragments/:id/info', getFragmentInfo);
 
 // Other routes will go here later on...
 

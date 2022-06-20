@@ -23,15 +23,15 @@ describe('GET /v1/fragments', () => {
 
   // Without expand, query should return only id
   test('without expand, authenticated users get an array of fragment ids', async () => {
-    const requestResult = await request(app)
+    const postResponse = await request(app)
       .post('/v1/fragments')
       .send('this is a fragment')
       .set('Content-type', 'text/plain')
       .auth('user1@email.com', 'password1');
 
     const fragment = await readFragment(
-      requestResult.body.fragment.ownerId,
-      requestResult.body.fragment.id
+      postResponse.body.fragment.ownerId,
+      postResponse.body.fragment.id
     );
 
     const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
@@ -51,5 +51,73 @@ describe('GET /v1/fragments', () => {
       .get('/v1/fragments?expand=1')
       .auth('user1@email.com', 'password1');
     expect(typeof res.body.fragments[0]).toBe('object');
+  });
+});
+
+describe('GET /v1/fragments/id', () => {
+  test('unauthenticated requests are denied', () =>
+    request(app).get('/v1/fragments/id').expect(401));
+
+  test('incorrect credentials are denied', () =>
+    request(app)
+      .get('/v1/fragments/id')
+      .auth('invalid@email.com', 'incorrect_password')
+      .expect(401));
+
+  test(`invalid id returns error`, async () => {
+    const res = await request(app)
+      .get(`/v1/fragments/invalid`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(404);
+    expect(res.body.status).toBe('error');
+    expect(res.body.error.message).toBe('Fragment not found');
+  });
+
+  test(`authenticated users can get an existing fragment's data`, async () => {
+    const data = 'this is a fragment';
+
+    const postResponse = await request(app)
+      .post('/v1/fragments')
+      .send(data)
+      .set('Content-Type', 'text/plain')
+      .auth('user1@email.com', 'password1');
+
+    const getResponse = await request(app)
+      .get(`/v1/fragments/${postResponse.body.fragment.id}`)
+      .auth('user1@email.com', 'password1');
+
+    expect(getResponse.statusCode).toBe(200);
+    expect(getResponse.text).toBe(data);
+  });
+});
+
+describe('GET /v1/fragments/id/info', () => {
+  test(`invalid id returns error`, async () => {
+    const res = await request(app)
+      .get(`/v1/fragments/invalid/info`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(404);
+    expect(res.body.status).toBe('error');
+    expect(res.body.error.message).toBe('Fragment not found');
+  });
+
+  test(`authenticated users can get an existing fragment's metadata`, async () => {
+    const postResponse = await request(app)
+      .post('/v1/fragments')
+      .send('this is a fragment')
+      .set('Content-type', 'text/plain')
+      .auth('user1@email.com', 'password1');
+
+    const fragment = await readFragment(
+      postResponse.body.fragment.ownerId,
+      postResponse.body.fragment.id
+    );
+
+    const res = await request(app)
+      .get(`/v1/fragments/${postResponse.body.fragment.id}/info`)
+      .auth('user1@email.com', 'password1');
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.fragment).toEqual(fragment);
   });
 });
