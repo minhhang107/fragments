@@ -17,11 +17,11 @@ const {
 const validTypes = [
   `text/plain`,
   `text/plain; charset=utf-8`,
+  `text/markdown`,
+  `text/html`,
   /*
    Currently, only text/plain is supported. Others will be added later.
 
-  `text/markdown`,
-  `text/html`,
   `application/json`,
   `image/png`,
   `image/jpeg`,
@@ -177,6 +177,45 @@ class Fragment {
    */
   static isSupportedType(value) {
     return validTypes.includes(value);
+  }
+
+  /**
+   * Returns true if this fragment is a text/* mime type
+   * @returns {boolean} true if fragment's type is text/*
+   */
+  static extToType(ext) {
+    let type;
+    switch (ext) {
+      case 'txt':
+        type = 'text/plain';
+        break;
+      case 'md':
+        type = 'text/markdown';
+        break;
+      case 'html':
+        type = 'text/html';
+        break;
+      case 'json':
+        type = 'application/json';
+        break;
+      case 'png':
+        type = 'image/png';
+        break;
+      case 'jpeg':
+        type = 'image/jpeg';
+        break;
+      case 'webp':
+        type = 'image/webp';
+        break;
+      case 'gif':
+        type = 'image/gif';
+        break;
+      default:
+        type = '';
+        break;
+    }
+
+    return type;
   }
 }
 
