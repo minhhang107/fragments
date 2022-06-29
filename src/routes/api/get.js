@@ -17,16 +17,15 @@ async function getFragments(req, res) {
 }
 
 async function getFragment(req, res) {
-  let pathName = path.parse(req.params.id);
-  let ext = pathName.ext.split('.').pop();
-  let type = Fragment.extToType(ext);
-  let id = pathName.name;
+  const pathName = path.parse(req.params.id);
+  const ext = pathName.ext.split('.').pop();
+  const id = pathName.name;
 
   try {
     const fragment = await Fragment.byId(req.user, id);
+    const fragmentData = await fragment.getData();
 
-    if (type === '') {
-      const fragmentData = await fragment.getData();
+    if (ext === '') {
       res.setHeader('Content-Type', fragment.type);
       res.status(200).send(fragmentData);
       logger.info(
@@ -36,10 +35,11 @@ async function getFragment(req, res) {
       return;
     }
 
+    const type = Fragment.extToType(ext);
     if (!Fragment.isSupportedType(type) || !fragment.formats.includes(type)) {
       res.status(415).json(createErrorResponse(415, 'Unsupported conversion type!'));
     } else {
-      let result = await fragment.convertTo(ext);
+      let result = await Fragment.convert(fragmentData, ext);
       res.setHeader('Content-Type', type);
       res.status(200).send(result);
       logger.info(

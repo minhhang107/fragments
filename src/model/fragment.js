@@ -155,7 +155,7 @@ class Fragment {
    */
   get formats() {
     let formats;
-    let imgFormats = ['img/png', 'img/jpeg', 'img/webp', 'img/gif'];
+    let imgFormats = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
     if (this.type.includes('text/plain')) {
       formats = ['text/plain'];
     } else if (this.type.includes('text/markdown')) {
@@ -184,53 +184,34 @@ class Fragment {
    * @returns {string} type name of the extension
    */
   static extToType(ext) {
-    let type;
-    switch (ext) {
-      case 'txt':
-        type = 'text/plain';
-        break;
-      case 'md':
-        type = 'text/markdown';
-        break;
-      case 'html':
-        type = 'text/html';
-        break;
-      case 'json':
-        type = 'application/json';
-        break;
-      case 'png':
-        type = 'image/png';
-        break;
-      case 'jpeg':
-        type = 'image/jpeg';
-        break;
-      case 'webp':
-        type = 'image/webp';
-        break;
-      case 'gif':
-        type = 'image/gif';
-        break;
-      default:
-        type = '';
-        break;
-    }
-
-    return type;
+    const extensions = ['txt', 'md', 'html', 'json', 'png', 'jpeg', 'webp', 'gif'];
+    const types = [
+      'text/plain',
+      'text/markdown',
+      'text/html',
+      'application/json',
+      'image/png',
+      'image/jpeg',
+      'image/webp',
+      'image/gif',
+    ];
+    const index = extensions.findIndex((extension) => extension === ext);
+    return types[index];
   }
 
   /**
    * Returns the converted content
+   * @param {Any} data the data to be converted
    * @param {string} ext the extension type to be converted into
    * @returns {Any} converted content
    */
-  async convertTo(ext) {
-    let result = await this.getData();
+  static convert(data, ext) {
     if (ext === 'html') {
       let MarkdownIt = require('markdown-it');
       let md = new MarkdownIt();
-      result = md.render(result.toString());
+      return md.render(data.toString());
     }
-    return result;
+    return data;
   }
 }
 

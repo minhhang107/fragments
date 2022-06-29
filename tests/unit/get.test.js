@@ -107,12 +107,12 @@ describe('GET /v1/fragments/id', () => {
   });
 
   test(`text type can't be converted into image`, async () => {
-    const data = 'this is a markdown';
+    const data = 'this is a text';
 
     const postResponse = await request(app)
       .post('/v1/fragments')
       .send(data)
-      .set('Content-Type', 'text/markdown')
+      .set('Content-Type', 'text/plain')
       .auth('user1@email.com', 'password1');
 
     const getResponse = await request(app)

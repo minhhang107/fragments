@@ -6,12 +6,13 @@ const wait = async (ms = 1000) => new Promise((resolve) => setTimeout(resolve, m
 const validTypes = [
   `text/plain`,
   `text/plain; charset=utf-8`,
-  /*
-   Currently, only text/plain is supported. Others will be added later.
-
   `text/markdown`,
   `text/html`,
   `application/json`,
+  /*
+   Currently, only text/plain is supported. Others will be added later.
+
+  
   `image/png`,
   `image/jpeg`,
   `image/webp`,
@@ -166,6 +167,33 @@ describe('Fragment class', () => {
       });
       expect(fragment.formats).toEqual(['text/plain']);
     });
+
+    test('formats returns the expected result for markdown', () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/markdown',
+        size: 0,
+      });
+      expect(fragment.formats).toEqual(['text/markdown', 'text/html', 'text/plain']);
+    });
+
+    test('formats returns the expected result for html', () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/html',
+        size: 0,
+      });
+      expect(fragment.formats).toEqual(['text/html', 'text/plain']);
+    });
+
+    test('formats returns the expected result for json', () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'application/json',
+        size: 0,
+      });
+      expect(fragment.formats).toEqual(['application/json', 'text/plain']);
+    });
   });
 
   describe('save(), getData(), setData(), byId(), byUser(), delete()', () => {
@@ -245,6 +273,16 @@ describe('Fragment class', () => {
       await fragment.setData(Buffer.from('a'));
       await Fragment.delete('1234', fragment.id);
       expect(() => Fragment.byId('1234', fragment.id)).rejects.toThrow();
+    });
+  });
+
+  describe('extToType(), convert()', () => {
+    test('extToType() should return the correct mime type of the extension', () => {
+      expect(Fragment.extToType('txt')).toBe('text/plain');
+    });
+
+    test('convert() should convert the data into the destination type', async () => {
+      expect(Fragment.convert('markdown', 'html')).toBe('<p>markdown</p>\n');
     });
   });
 });
