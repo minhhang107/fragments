@@ -24,9 +24,9 @@ async function getFragment(req, res) {
 
   try {
     const fragment = await Fragment.byId(req.user, id);
-    const fragmentData = await fragment.getData();
 
     if (type === '') {
+      const fragmentData = await fragment.getData();
       res.setHeader('Content-Type', fragment.type);
       res.status(200).send(fragmentData);
       logger.info(
@@ -39,10 +39,7 @@ async function getFragment(req, res) {
     if (!Fragment.isSupportedType(type) || !fragment.formats.includes(type)) {
       res.status(415).json(createErrorResponse(415, 'Unsupported conversion type!'));
     } else {
-      let MarkdownIt = require('markdown-it');
-      let md = new MarkdownIt();
-      let result = md.render(fragmentData.toString());
-
+      let result = await fragment.convertTo(ext);
       res.setHeader('Content-Type', type);
       res.status(200).send(result);
       logger.info(

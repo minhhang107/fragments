@@ -19,10 +19,10 @@ const validTypes = [
   `text/plain; charset=utf-8`,
   `text/markdown`,
   `text/html`,
+  `application/json`,
   /*
    Currently, only text/plain is supported. Others will be added later.
-
-  `application/json`,
+   
   `image/png`,
   `image/jpeg`,
   `image/webp`,
@@ -180,8 +180,8 @@ class Fragment {
   }
 
   /**
-   * Returns true if this fragment is a text/* mime type
-   * @returns {boolean} true if fragment's type is text/*
+   * Returns mime type
+   * @returns {string} type name of the extension
    */
   static extToType(ext) {
     let type;
@@ -216,6 +216,21 @@ class Fragment {
     }
 
     return type;
+  }
+
+  /**
+   * Returns the converted content
+   * @param {string} ext the extension type to be converted into
+   * @returns {Any} converted content
+   */
+  async convertTo(ext) {
+    let result = await this.getData();
+    if (ext === 'html') {
+      let MarkdownIt = require('markdown-it');
+      let md = new MarkdownIt();
+      result = md.render(result.toString());
+    }
+    return result;
   }
 }
 
