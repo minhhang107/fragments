@@ -21,6 +21,9 @@ WORKDIR /app
 # Copy the package.json and package-lock.json files into the working dir (/app)
 COPY package*.json ./
 
+# copy source code
+COPY ./src/ ./src/
+
 # Install node dependencies defined in package-lock.json
 RUN npm ci --only=production 
 
@@ -39,17 +42,14 @@ ENV PORT=8080
 # install curl and dumb-init
 RUN apk --no-cache add curl=7.83.1-r2 && apk --no-cache add dumb-init=1.2.5-r1
 
+# copy from previous stage
+COPY --chown=node:node --from=dependencies \
+/app/node_modules /app/ \
+/app/src /app/
+
 # health check
 HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
   CMD curl --fail localhost:${PORT} || exit 1
-
-# copy source code
-COPY --chown=node:node ./src /app/
-
-# copy from previous stage
-COPY --chown=node:node --from=dependencies \
-/app/node_modules /app/ 
-
 
 # switch user to node
 USER node
