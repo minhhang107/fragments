@@ -47,6 +47,7 @@ COPY --chown=node:node --from=dependencies \
 /app/node_modules /app/ \
 /app/src /app/
 
+
 # health check
 HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
   CMD curl --fail localhost:${PORT} || exit 1
