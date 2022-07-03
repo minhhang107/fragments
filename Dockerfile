@@ -36,17 +36,20 @@ WORKDIR /app
 # We default to use port 8080 in our service
 ENV PORT=8080
 
-# install curl
-RUN apk --no-cache add curl=7.55.0-r2 && apk --no-cache add dumb-init=1.2.5-r1
+# install curl and dumb-init
+RUN apk --no-cache add curl=7.83.1-r2 && apk --no-cache add dumb-init=1.2.5-r1
 
 # health check
 HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
   CMD curl --fail localhost:${PORT} || exit 1
 
+# copy source code
+COPY --chown=node:node ./src /app/
+
 # copy from previous stage
 COPY --chown=node:node --from=dependencies \
-/app/node_modules /app/ \
-/app/src /app/
+/app/node_modules /app/ 
+
 
 # switch user to node
 USER node
