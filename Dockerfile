@@ -37,7 +37,7 @@ WORKDIR /app
 ENV PORT=8080
 
 # install curl
-RUN apk --no-cache add curl && apk --no-cache add dumb-init
+RUN apk --no-cache add curl=7.79.1 && apk --no-cache add dumb-init=1.2.5
 
 # health check
 HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
