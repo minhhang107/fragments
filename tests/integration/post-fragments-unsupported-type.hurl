@@ -8,3 +8,9 @@ Content-Type: text/css
 ```This is a css!```
 
 HTTP/1.1 415
+
+[Asserts]
+jsonpath "$.status" == "error"
+jsonpath "$.error.message" isString
+jsonpath "$.error.message" == "Type not supported"
+jsonpath "$.error.code" == 415
