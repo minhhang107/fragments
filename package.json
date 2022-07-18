@@ -6,11 +6,12 @@
   "scripts": {
     "test:watch": "jest -c jest.config.js --runInBand --watch --",
     "test": "jest -c jest.config.js --runInBand --",
+    "test:integration": "hurl --test --glob \"tests/integration/**/*.hurl\"",
     "coverage": "jest -c jest.config.js --runInBand --coverage",
     "start": "node src/index.js",
     "dev": "cross-env LOG_LEVEL=debug nodemon ./src/index.js --watch src",
     "debug": "cross-env LOG_LEVEL=debug nodemon --inspect=0.0.0.0:9229 ./src/index.js --watch src",
-    "lint": "eslint --config .eslintrc.js src/** tests/**"
+    "lint": "eslint --config .eslintrc.js src/** tests/**/*.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/minhhang107/fragments#readme",
   "devDependencies": {
+    "@orangeopensource/hurl": "^1.6.5",
     "cross-env": "^7.0.3",
     "eslint": "^8.16.0",
     "jest": "^28.1.0",
