@@ -1,0 +1,9 @@
+services:
+  fragments:
+    image: ${DOCKER_REPO}:${DOCKER_TAG}
+    init: true
+    ports:
+      - '80:8080'
+    environment:
+      - NODE_ENV=production
+      - HTPASSWD_FILE=tests/.htpasswd
