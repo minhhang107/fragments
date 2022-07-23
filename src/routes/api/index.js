@@ -24,15 +24,14 @@ const rawBody = () =>
   });
 
 // GET routes
-// router.get('/fragments', require('./get'));
-// router.get('/fragments/:id', require('./get-fragment'));
 router.get('/fragments', getFragments);
 router.get('/fragments/:id', getFragment);
 router.get('/fragments/:id/info', getFragmentInfo);
 
-// Other routes will go here later on...
-
 // POST routes
 router.post('/fragments', rawBody(), require('./post'));
+
+// DELETE routes
+router.delete('/fragments/:id', require('./delete'));
 
 module.exports = router;
