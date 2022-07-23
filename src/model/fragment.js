@@ -81,7 +81,7 @@ class Fragment {
       const fragment = await readFragment(ownerId, id);
       return new Fragment(fragment);
     } catch (err) {
-      throw new Error('fragment not existed');
+      throw new Error('Fragment not found');
     }
   }
 
@@ -91,8 +91,12 @@ class Fragment {
    * @param {string} id fragment's id
    * @returns Promise
    */
-  static delete(ownerId, id) {
-    return deleteFragment(ownerId, id);
+  static async delete(ownerId, id) {
+    try {
+      return await deleteFragment(ownerId, id);
+    } catch (err) {
+      throw new Error('Unable to delete fragment');
+    }
   }
 
   /**
@@ -112,7 +116,7 @@ class Fragment {
     try {
       return readFragmentData(this.ownerId, this.id);
     } catch (err) {
-      throw new Error('unable to read fragment');
+      throw new Error('Unable to read fragment');
     }
   }
 
@@ -123,7 +127,7 @@ class Fragment {
    */
   async setData(data) {
     if (!data) {
-      throw new Error('data is missing');
+      throw new Error('Data is missing');
     }
 
     this.size = Buffer.byteLength(data);
