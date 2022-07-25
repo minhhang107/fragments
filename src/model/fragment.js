@@ -2,7 +2,8 @@
 const { nanoid } = require('nanoid');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
-// const logger = require('../logger');
+
+const sharp = require('sharp');
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -20,14 +21,10 @@ const validTypes = [
   `text/markdown`,
   `text/html`,
   `application/json`,
-  /*
-   Currently, only text/plain is supported. Others will be added later.
-   
   `image/png`,
   `image/jpeg`,
   `image/webp`,
   `image/gif`,
-  */
 ];
 
 class Fragment {
@@ -112,12 +109,9 @@ class Fragment {
    * Gets the fragment's data from the database
    * @returns Promise<Buffer>
    */
+
   getData() {
-    try {
-      return readFragmentData(this.ownerId, this.id);
-    } catch (err) {
-      throw new Error('Unable to read fragment');
-    }
+    return readFragmentData(this.ownerId, this.id);
   }
 
   /**
@@ -168,7 +162,12 @@ class Fragment {
       formats = ['text/html', 'text/plain'];
     } else if (this.type.includes('application/json')) {
       formats = ['application/json', 'text/plain'];
-    } else if (imgFormats.some((format) => this.type.include(format))) {
+    } else if (
+      this.type === 'image/png' ||
+      this.type === 'image/jpeg' ||
+      this.type === 'image/webp' ||
+      this.type === 'image/gif'
+    ) {
       formats = imgFormats;
     }
     return formats;
@@ -215,6 +214,10 @@ class Fragment {
       let md = new MarkdownIt();
       return md.render(data.toString());
     }
+    if (ext === 'png' || ext === 'jpeg' || ext === 'gif' || ext === 'webp') {
+      return sharp(data).toFormat(ext).toBuffer();
+    }
+
     return data;
   }
 }
