@@ -11,6 +11,7 @@ services:
       # Default to use `us-east-1`, which will also pick the AWS data backend
       - AWS_REGION=us-east-1
       # Allow the following variables to be forwarded into the container from the env if set
+      - API_URL
       - AWS_COGNITO_POOL_ID
       - AWS_COGNITO_CLIENT_ID
       # The S3 Bucket to use, default to `fragments` if missing
