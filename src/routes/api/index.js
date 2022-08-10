@@ -31,6 +31,9 @@ router.get('/fragments/:id/info', getFragmentInfo);
 // POST routes
 router.post('/fragments', rawBody(), require('./post'));
 
+// PUT routes
+router.put('/fragments/:id', rawBody(), require('./put'));
+
 // DELETE routes
 router.delete('/fragments/:id', require('./delete'));
 
