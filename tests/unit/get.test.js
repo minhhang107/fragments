@@ -1,8 +1,8 @@
 // tests/unit/get.test.js
 
 const request = require('supertest');
-
 const app = require('../../src/app');
+const fs = require('fs');
 const { readFragment } = require('../../src/model/data');
 
 describe('GET /v1/fragments', () => {
@@ -73,7 +73,7 @@ describe('GET /v1/fragments/id', () => {
     expect(res.body.error.message).toBe('Fragment not found');
   });
 
-  test(`authenticated users can get an existing fragment's data`, async () => {
+  test(`authenticated users can get an existing text fragment's data`, async () => {
     const data = 'this is a fragment';
 
     const postResponse = await request(app)
@@ -90,6 +90,23 @@ describe('GET /v1/fragments/id', () => {
     expect(getResponse.text).toBe(data);
   });
 
+  test(`authenticated users can get an existing image fragment's data`, async () => {
+    const postResponse = await request(app)
+      .post('/v1/fragments/')
+      .auth('user1@email.com', 'password1')
+      .set('Content-type', 'image/png')
+      .send(fs.readFileSync(`${__dirname}/images/baymax.png`));
+    expect(postResponse.status).toBe(201);
+
+    const res = await request(app)
+      .get(`/v1/fragments/${postResponse.body.fragment.id}`)
+      .auth('user1@email.com', 'password1');
+    expect(res.type).toBe('image/png');
+    expect(res.statusCode).toBe(200);
+  });
+});
+
+describe('GET /v1/fragments/id.ext', () => {
   test(`markdown can be converted into html`, async () => {
     const data = 'this is a markdown';
 
@@ -121,6 +138,21 @@ describe('GET /v1/fragments/id', () => {
 
     expect(getResponse.statusCode).toBe(415);
     expect(getResponse.body.error.message).toBe('Unsupported conversion type!');
+  });
+
+  test(`png image can be converted into jpeg`, async () => {
+    const postResponse = await request(app)
+      .post('/v1/fragments/')
+      .auth('user1@email.com', 'password1')
+      .set('Content-type', 'image/png')
+      .send(fs.readFileSync(`${__dirname}/images/baymax.png`));
+    expect(postResponse.status).toBe(201);
+
+    const res = await request(app)
+      .get(`/v1/fragments/${postResponse.body.fragment.id}.jpeg`)
+      .auth('user1@email.com', 'password1');
+    expect(res.type).toBe('image/jpeg');
+    expect(res.statusCode).toBe(200);
   });
 });
 

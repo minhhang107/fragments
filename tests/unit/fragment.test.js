@@ -189,6 +189,15 @@ describe('Fragment class', () => {
       });
       expect(fragment.formats).toEqual(['application/json', 'text/plain']);
     });
+
+    test('formats returns the expected result for image file', () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'image/jpeg',
+        size: 0,
+      });
+      expect(fragment.formats).toEqual(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
+    });
   });
 
   describe('save(), getData(), setData(), byId(), byUser(), delete()', () => {
